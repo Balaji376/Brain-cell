@@ -1,78 +1,76 @@
+import React, { useEffect, useState } from 'react';
+import '../styles/fetch.css';
 
-
-
-import React, { useEffect, useState } from 'react'
-
-import '../styles/fetch.css'
 const Fetchdata = () => {
+    const [fetchData, setFetchData] = useState([]);
+    const [filterData, setFilterData] = useState([]);
+    const [searchName, setSearchName] = useState('');
+    const [searchEmail, setSearchEmail] = useState('');
 
-    const [fetchData,setFetchData] =useState([])
-    const [filterData, setFilterData] = useState([])
-    const [search, setSearch]=useState('')
-
-    async function showData(){
-
-        try{
-
-            let res=await fetch('https://jsonplaceholder.typicode.com/users')
-
-            let data=await res.json()
-
-            console.log(data)
-
-            setFetchData(data)
-            setFilterData(data)
-        }catch(e){
-
-            console.log(e)
+    async function showData() {
+        try {
+            let res = await fetch('https://jsonplaceholder.typicode.com/users');
+            let data = await res.json();
+            setFetchData(data);
+            setFilterData(data);
+        } catch (e) {
+            console.log(e);
         }
     }
 
+    useEffect(() => {
+        showData();
+    }, []);
 
-    useEffect(()=>{
-        showData()
-    },[])
+    const handleChangeName = (e) => {
+        let searchValue = e.target.value.toLowerCase();
+        setSearchName(searchValue);
+        let filtered = fetchData.filter(item => item.name.toLowerCase().includes(searchValue));
+        setFilterData(filtered);
+    };
 
-const handleChange=(e)=>{
-    let serchData=e.target.value
+    const handleChangeEmail = (e) => {
+        let searchValue = e.target.value.toLowerCase();
+        setSearchEmail(searchValue);
+        let filtered = fetchData.filter(item => item.email.toLowerCase().includes(searchValue));
+        setFilterData(filtered);
+    };
 
-    setSearch(serchData)
-    let filterData=fetchData.filter(item=>item.name.toLowerCase().includes(serchData.toLowerCase()))
-    setFilterData(filterData)
-}
+    return (
+        <div id="container">
+            <div className="search-container">
+                <div className="search-box">
+                    <label htmlFor="name">Filter by Name:</label>
+                    <input 
+                        type="text" 
+                        placeholder="Enter Name" 
+                        onChange={handleChangeName} 
+                        value={searchName} 
+                    />
+                </div>
+                <div className="search-box">
+                    <label htmlFor="email">Filter by Email:</label>
+                    <input 
+                        type="text" 
+                        placeholder="Enter Email" 
+                        onChange={handleChangeEmail} 
+                        value={searchEmail} 
+                    />
+                </div>
+            </div>
 
-const handleChangeEmail=(e)=>{
-    let serchData=e.target.value
-    setSearch(serchData)
-    let filterData=fetchData.filter(item=>item.email.toLowerCase().includes(serchData.toLowerCase()))
-    setFilterData(filterData)
-}
+            <div className="user-list">
+                {filterData.map((ele, id) => (
+                    <ul className="user-card" key={id}>
+                        <li>Name: {ele.name}</li>
+                        <li>Email: {ele.email}</li>
+                    </ul>
+                ))}
+            </div>
+        </div>
+    );
+};
 
-  return (
-    
-<div id='container'>
+export default Fetchdata;
 
 
-<div>
-    <label for='name'>Name :</label>
-    <input type='text' placeholder='Filter by Name' onChange={handleChange} value={search} />
-    <label for='name'>Email:</label>
-    <input type='text' placeholder='Filter by Email' onChange={handleChangeEmail} value={search} />
-</div>
-{
-    filterData.map((ele,id)=>{
-
-        return(
-            <ul key={id}>
-                <li>Name: {ele.name}</li>
-                <li>Email: {ele.email}</li>
-            </ul>
-            
-        )
-    })
-}
-</div>
-  )
-}
-
-export default Fetchdata

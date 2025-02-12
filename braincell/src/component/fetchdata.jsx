@@ -72,5 +72,3 @@ const Fetchdata = () => {
 };
 
 export default Fetchdata;
-
-
